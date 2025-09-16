@@ -53,6 +53,18 @@
         }
     </style>
 
+    <!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '3b8c86bbc3bca0215cd8854da7c46b7adbc40ba4';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
 
 </head>
 
@@ -1388,228 +1400,13 @@
         </div>
     </div>
 
-    <button class="open-button wow animate__shakeY delay-5s animate__delay-5s" onclick="openForm()"><i class="fa fa-2x fa-comment"></i></button>
-<style>
+  
 
-    .chat-popup input::-webkit-input-placeholder {
-        color: #808080 !important;
-        font-size: 10px !important
-    }
-
-    .chat-popup input::-moz-placeholder {
-        color: #808080 !important;
-        font-size: 10px !important
-    }
-
-    .chat-popup input::placeholder {
-        color: #808080 !important;
-        font-size: 10px !important
-    }
-
-    .chat-popup .form-control-sm {
-        color: #808080 !important;
-        font-size: 10px !important
-    }
 
 </style>
-    <div class="chat-popup" id="myForm">
-        <div class="form-container">
-            <img src="main/img/favicon.png" height="80" />
-            <p><small> <i class="fa fa-support">&nbsp;</i> support</small></p>
-            <button type="button" class="cancel" onclick="closeForm()"> X </button>
+   
 
-            <div id="opencase" class="text-center nodisplay">
-
-                <input class="form-control-sm" name="email" id="email" type="email" placeholder="Please insert your email" />
-                <input class="form-control-sm" name="name" id="name" placeholder="Your first name" />
-                <textarea class="form-control-sm" id="subject" name="subject" maxlength="200" placeholder="How may we assist you?"></textarea>
-                <button id="btnSupport" onclick="createSupport();" class="btn-outline text-black"><i class="fa fa-envelope">&nbsp;</i>Send</button>
-            </div>
-
-            <div id="handlecase" class="nodisplay">
-                <div class="chatcontainer">
-                    <div class="">
-                        <div class="panel panel-inverse">
-
-                            <div id="scroller" class="panel-body">
-                                <span id="subjectv">Hang on, someone will be with you shortly.</span><br />
-
-                                <div id="messages">
-                                    <br />
-                                    <br />
-                                    <br />
-                                    <span text-center>loading....</span>
-                                    <br /> <small>You can send additional message</small>
-                                    
-                      
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="chat">
-                        <input id="message" required type="text" class="form-control-sm"
-                               placeholder="Say something here....." />
-                        <button id="btnChat" onclick="sendchat('message');" class="btn-inverse">
-                            <i class="fa fa-arrow-circle-right"></i>
-                        </button>
-
-
-                    </div>
-                </div>
-
-            </div>
-
-
-        </div>
-    </div>
-
-
-    <script>
-
-        let runInterval;
-        function openForm() {
-            document.getElementById("myForm").style.display = "block";
-            //detect if session exist then return to chat else to new request
-            if (!sessionStorage.getItem("email") | !sessionStorage.getItem("caseid")) {
-                document.getElementById('handlecase').style.display = "none";
-                document.getElementById('opencase').style.display = "block";
-            } else {
-                document.getElementById('email').value = sessionStorage.getItem("email");
-                document.getElementById('handlecase').style.display = "block";
-                document.getElementById('opencase').style.display = "none";
-                if (!runInterval) {
-                    runInterval = setInterval(sendchat, 3000);
-                } else {
-                    clearInterval(runInterval); // Stop the interval
-                    runInterval = setInterval(sendchat, 3000);
-                }
-
-            }
-            var audio = new Audio(gethost() + '/main/audio/pop.mp3');
-            audio.play();
-        }
-
-        function closeForm() {
-            document.getElementById("myForm").style.display = "none";
-        }
-
-        function createSupport() {
-
-            let subject = document.getElementById('subject').value;
-            document.getElementById('btnSupport').disabled = true;
-            let email = document.getElementById('email').value;
-            let name = document.getElementById('name').value;
-            const xhr = new XMLHttpRequest();
-            const url = gethost() + "/supportcase";
-            if (!subject | !email | !name) {
-                alert('Please input email, first name and your support request.');
-                return;
-            }
-            const data = {
-                name: name, email: email, subject: subject, author: ''
-            };
-            xhr.open("https://primeventuresltd.com/POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    var result = response;
-                    if (result !== 'failed') {
-                        //create session with email and caseid
-                        sessionStorage.setItem("email", email);
-                        sessionStorage.setItem("caseid", result);
-                        sendchat("ping");
-                        document.getElementById('handlecase').style.display = "block";
-                        document.getElementById('opencase').style.display = "none";
-                        runInterval = setInterval(sendchat, 3000);
-                        document.getElementById('btnSupport').disabled = false;
-                    } else {
-                        alert('Sorry, support is currently not available');
-                        document.getElementById('btnSupport').disabled = false;
-                    }
-                } else {
-                    document.getElementById('btnSupport').disabled = false;
-                }
-            };
-            xhr.send(JSON.stringify(data));
-        }
-
-        let current = 0;
-        function sendchat(motive = 'ping') {
-
-            document.getElementById('btnChat').disabled = true;
-            let chat = document.getElementById('message').value;
-            let email = document.getElementById('email').value;
-            const caseid = sessionStorage.getItem("caseid");
-            const xhr = new XMLHttpRequest();
-            const url = gethost() + "/supportchat";
-            if (!chat & motive == 'message') {
-                alert('Please say something');
-                return;
-            }
-            const data = {
-                caseid: caseid, email: email, chat: chat, author: '', motive: motive
-            };
-
-            xhr.open("https://primeventuresltd.com/POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-
-            xhr.onreadystatechange = function () {
-
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    var result = response;
-                    document.getElementById('subjectv').innerText = result[0].subject;
-                    let chats = '';// alert(result);
-                    for (i = 0; i < result.length; i++) {
-
-                        chats += `
-                    <div class="chatreply">
-                     <div class="bg-dark  `+ result[i].status + `">
-     <p class="">
-        `+ result[i].chat + `
-     </p>
- </div>
- </div>
-
-                    `;
-                    }
-
-                    if (result.length > current) {
-                        current = result.length;
-                        document.getElementById('messages').innerHTML = chats;
-                        let scroller = document.getElementById('scroller');
-                        scroller.scrollTop = scroller.scrollHeight;
-                        if (result[(result.length - 1)].status == 'RESPONSE') {
-                            var audio = new Audio(gethost() + '/main/audio/pop.mp3');
-                            audio.play();
-                        }
-                    }
-                    document.getElementById('btnChat').disabled = false;
-                } else {
-                    document.getElementById('btnChat').disabled = false;
-                }
-            };
-
-            xhr.send(JSON.stringify(data));
-        }
-
-
-        function gethost() {
-
-            if (window.location.protocol == "index.html") {
-                return "https://" + window.location.host;
-            } else {
-                return "http://" + window.location.host;
-            }
-
-        }
-
-
-
-
-    </script>
+ 
 
     <script>
 
